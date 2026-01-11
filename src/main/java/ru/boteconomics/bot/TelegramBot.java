@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.boteconomics.bot.handlers.AccessHandler;
-import ru.boteconomics.bot.handlers.CallbackHandler;
 import ru.boteconomics.bot.handlers.HandlerResult;
-import ru.boteconomics.bot.handlers.MessageHandler;
+import ru.boteconomics.bot.handlers.message.MessageDispatcher; // ИЗМЕНЕНО: новый диспетчер
+import ru.boteconomics.bot.handlers.callback.CallbackDispatcher;
 import ru.boteconomics.config.BotConfig;
 
 @Component
@@ -17,16 +17,17 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig botConfig;
     private final AccessHandler accessHandler;
-    private final MessageHandler messageHandler;
-    private final CallbackHandler callbackHandler;
+    private final MessageDispatcher messageDispatcher; // ИЗМЕНЕНО: MessageHandler → MessageDispatcher
+    private final CallbackDispatcher callbackDispatcher;
 
     public TelegramBot(BotConfig botConfig, AccessHandler accessHandler,
-                       MessageHandler messageHandler, CallbackHandler callbackHandler) {
+                       MessageDispatcher messageDispatcher, // ИЗМЕНЕНО
+                       CallbackDispatcher callbackDispatcher) {
         super(botConfig.getBotToken());
         this.botConfig = botConfig;
         this.accessHandler = accessHandler;
-        this.messageHandler = messageHandler;
-        this.callbackHandler = callbackHandler;
+        this.messageDispatcher = messageDispatcher; // ИЗМЕНЕНО
+        this.callbackDispatcher = callbackDispatcher;
     }
 
     @Override
@@ -48,12 +49,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void handleTextMessage(Long chatId, String text) {
-        HandlerResult result = messageHandler.handleMessage(chatId, text);
+        HandlerResult result = messageDispatcher.dispatch(chatId, text); // ИЗМЕНЕНО: handleMessage → dispatch
         sendMessage(chatId, result.getResponse(), result.getKeyboard());
     }
 
     private void handleCallback(Long chatId, String callbackData) {
-        HandlerResult result = callbackHandler.handleCallback(chatId, callbackData);
+        HandlerResult result = callbackDispatcher.dispatch(chatId, callbackData);
         sendMessage(chatId, result.getResponse(), result.getKeyboard());
     }
 
