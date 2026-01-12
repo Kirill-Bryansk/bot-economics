@@ -1,7 +1,6 @@
 package ru.boteconomics.bot.handlers.callback;
 
 import org.springframework.stereotype.Component;
-import ru.boteconomics.bot.domain.Transaction;
 import ru.boteconomics.bot.handlers.HandlerResult;
 import ru.boteconomics.bot.keyboard.HistoryKeyboardFactory;
 import ru.boteconomics.bot.keyboard.MainKeyboardFactory;
@@ -9,7 +8,6 @@ import ru.boteconomics.bot.service.HistoryService;
 import ru.boteconomics.bot.service.TransactionService;
 import ru.boteconomics.bot.state.UserStateService;
 
-import java.math.BigDecimal;
 
 @Component
 public class TransactionCallbackHandler extends BaseCallbackHandler {

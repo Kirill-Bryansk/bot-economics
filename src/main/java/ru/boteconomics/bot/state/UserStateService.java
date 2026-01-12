@@ -167,4 +167,8 @@ public class UserStateService {
             this.transactionId = transactionId;
         }
     }
+
+    public Child getPendingChild(Long userId) {
+        return getUserData(userId).pendingChild;
+    }
 }

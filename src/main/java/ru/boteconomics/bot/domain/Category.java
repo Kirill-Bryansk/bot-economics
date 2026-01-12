@@ -59,9 +59,6 @@ public enum Category {
         this.emoji = emoji;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
 
     public TransactionType getType() {
         return type;
@@ -114,21 +111,6 @@ public enum Category {
             } catch (IllegalArgumentException e) {
                 return null;
             }
-        }
-
-        return null;
-    }
-
-    public static String extractChildCategoryType(Category category) {
-        if (!isChildCategory(category)) {
-            return null;
-        }
-
-        String name = category.name();
-        String[] parts = name.split("_");
-
-        if (parts.length >= 3) {
-            return parts[2];
         }
 
         return null;

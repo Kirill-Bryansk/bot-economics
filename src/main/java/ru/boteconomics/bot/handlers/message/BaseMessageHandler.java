@@ -28,10 +28,6 @@ public abstract class BaseMessageHandler {
         return new HandlerResult("❌ " + message, mainKeyboardFactory.createMainMenu());
     }
 
-    protected HandlerResult success(String message) {
-        return new HandlerResult("✅ " + message, mainKeyboardFactory.createMainMenu());
-    }
-
     protected HandlerResult withKeyboard(String message, ReplyKeyboard keyboard) {
         return new HandlerResult(message, keyboard);
     }

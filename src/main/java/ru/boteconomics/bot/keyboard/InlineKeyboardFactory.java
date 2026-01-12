@@ -96,7 +96,7 @@ public class InlineKeyboardFactory {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
         for (Child child : Child.values()) {
-            rows.add(List.of(createButton(child.getFullName(), "SHOW_" + child.name())));
+            rows.add(List.of(createButton(child.getFullName(), "SHOW_CHILD_" + child.name())));
         }
 
         rows.add(List.of(createButton("⬅️ Назад к категориям", "BACK_TO_CATEGORIES")));
