@@ -1,67 +1,82 @@
 package ru.boteconomics.bot.core.state.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.boteconomics.bot.core.session.UserSession;
-import ru.boteconomics.bot.handlers.HandlerResult;
-import ru.boteconomics.bot.core.replykeyboard.ReplyKeyboardManager;
-import ru.boteconomics.bot.core.replykeyboard.ReplyKeyboardType;
 import ru.boteconomics.bot.core.buttons.MenuButton;
+import ru.boteconomics.bot.core.response.HandlerResponse;
+import ru.boteconomics.bot.core.session.UserSession;
 
+/**
+ * Обработчик главного меню
+ * Состояние: MAIN_MENU
+ */
+@Slf4j
 @Component
-public class MainMenuHandler {
+public class MainMenuHandler extends BaseStateHandler {
 
-    private final ReplyKeyboardManager keyboardManager;
-
-    public MainMenuHandler(ReplyKeyboardManager keyboardManager) {
-        this.keyboardManager = keyboardManager;
-        System.out.println("[HANDLER] MainMenuHandler создан");
+    @Override
+    public String getStateId() {
+        return "MAIN_MENU";
     }
 
-    public HandlerResult handle(String userInput, UserSession session) {
-        System.out.println("[HANDLER] MainMenuHandler обрабатывает: '" + userInput + "'");
+    @Override
+    protected HandlerResponse processValidInput(String input, UserSession session) {
+        log.info("Обработка валидного ввода в главном меню: '{}'", input);
 
-        // Обрабатываем ввод пользователя
-        if (MenuButton.ADD_EXPENSE.equals(userInput)) {
-            System.out.println("[HANDLER] Пользователь нажал 'Добавить расход'");
-            session.setCurrentScreen("CATEGORY_SELECTION");
+        // 1. Проверяем, не является ли ввод действием (Назад/Отмена)
+        HandlerResponse actionResponse = handleActionIfNeeded(input, session);
+        if (actionResponse != null) {
+            return actionResponse;
+        }
 
-            return HandlerResult.next(
+        // 2. Обработка кнопок главного меню
+        if (MenuButton.ADD_EXPENSE.equals(input)) {
+            log.info("Пользователь выбрал 'Добавить расход'");
+            return HandlerResponse.next(
                     "Выберите категорию расхода:",
-                    keyboardManager.getKeyboard(ReplyKeyboardType.CATEGORY_SELECTION),
                     "CATEGORY_SELECTION"
             );
         }
 
-        if (MenuButton.HISTORY.equals(userInput)) {
-            System.out.println("[HANDLER] Пользователь нажал 'История'");
-            return HandlerResult.stay(
-                    "📋 История операций (функция в разработке)",
-                    keyboardManager.getKeyboard(ReplyKeyboardType.MAIN_MENU)
+        if (MenuButton.HISTORY.equals(input)) {
+            log.info("Пользователь выбрал 'История операций'");
+            return HandlerResponse.stay(
+                    "📋 История операций\n\n" +
+                    "Функция находится в разработке. Скоро здесь появится история ваших расходов.",
+                    getStateId()  // <-- ДОБАВЛЕНО: передаём текущее состояние
             );
         }
 
-        if (MenuButton.STATISTICS.equals(userInput)) {
-            System.out.println("[HANDLER] Пользователь нажал 'Статистика'");
-            return HandlerResult.stay(
-                    "📊 Статистика расходов (функция в разработке)",
-                    keyboardManager.getKeyboard(ReplyKeyboardType.MAIN_MENU)
+        if (MenuButton.STATISTICS.equals(input)) {
+            log.info("Пользователь выбрал 'Статистика'");
+            return HandlerResponse.stay(
+                    "📊 Статистика\n\n" +
+                    "Функция находится в разработке. Скоро здесь появится статистика по вашим расходам.",
+                    getStateId()  // <-- ДОБАВЛЕНО: передаём текущее состояние
             );
         }
 
-        if ("/start".equals(userInput) || MenuButton.MAIN_MENU.equals(userInput)) {
-            System.out.println("[HANDLER] Команда /start или 'Главное меню'");
-            session.resetToMainMenu();
-            return HandlerResult.stay(
-                    "🏠 Главное меню",
-                    keyboardManager.getKeyboard(ReplyKeyboardType.MAIN_MENU)
-            );
-        }
+        // 3. Если попали сюда - значит InputErrorHandler не сработал как должен
+        log.error("Непредвиденный ввод в MainMenuHandler: '{}'", input);
+        return HandlerResponse.stay(
+                "Пожалуйста, используйте кнопки меню",
+                getStateId()  // <-- ДОБАВЛЕНО: передаём текущее состояние
+        );
+    }
 
-        // Неизвестная команда
-        System.out.println("[HANDLER] Неизвестная команда: " + userInput);
-        return HandlerResult.stay(
-                "Я не понимаю эту команду. Используйте кнопки меню.",
-                keyboardManager.getKeyboard(ReplyKeyboardType.MAIN_MENU)
+    @Override
+    protected HandlerResponse handleBackAction(UserSession session) {
+        log.debug("Действие 'Назад' в главном меню - игнорируем");
+        return HandlerResponse.stay("Вы в главном меню", getStateId()); // <-- ДОБАВЛЕНО
+    }
+
+    @Override
+    protected HandlerResponse handleCancelAction(UserSession session) {
+        log.debug("Действие 'Отмена' в главном меню - очистка сессии");
+        session.resetAll();
+        return HandlerResponse.stay(
+                "Сессия очищена. Вы в главном меню.",
+                getStateId()  // <-- ДОБАВЛЕНО
         );
     }
 }

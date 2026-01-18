@@ -1,5 +1,6 @@
 package ru.boteconomics.bot;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -7,6 +8,7 @@ import ru.boteconomics.bot.core.MessageSender;
 import ru.boteconomics.bot.core.UpdateProcessor;
 import ru.boteconomics.config.BotConfig;
 
+@Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -21,23 +23,27 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.botConfig = botConfig;
         this.updateProcessor = updateProcessor;
         this.messageSender = messageSender;
-        System.out.println("✅ TelegramBot создан, имя: " + botConfig.getBotName());
+
+        // Устанавливаем бота в MessageSender
+        this.messageSender.setBot(this);
+
+        log.info("✅ TelegramBot создан, имя: {}", botConfig.getBotName());
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         Long chatId = updateProcessor.extractChatId(update);
         if (chatId == null) {
-            System.out.println("[BOT] Не удалось получить chatId из update");
+            log.warn("Не удалось получить chatId из update");
             return;
         }
 
-        System.out.println("\n" + "=".repeat(50));
-        System.out.println("[BOT] Получен update от chatId: " + chatId);
+        log.debug("\n" + "=".repeat(50));
+        log.debug("Получен update от chatId: {}", chatId);
 
         // Проверка доступа (пока закомментируем для теста)
         // if (!botConfig.isAnna(chatId)) {
-        //     messageSender.send(this, chatId, "🚫 Доступ запрещен", null);
+        //     messageSender.send(chatId, "🚫 Доступ запрещен");
         //     return;
         // }
 
@@ -45,36 +51,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
             if ("/start".equals(text)) {
-                System.out.println("[BOT] Обработка команды /start");
-                messageSender.send(this, chatId,
+                log.info("Обработка команды /start для chatId={}", chatId);
+                messageSender.send(chatId,
                         """
                         👋 Привет! Я бот для учета расходов семьи.
                         
                         Используйте кнопки ниже для управления:
-                        """,
-                        null  // Клавиатуру покажет UpdateProcessor
-                );
+                        """);
+                // UpdateProcessor сам добавит клавиатуру при следующем сообщении
             }
         }
 
-        var result = updateProcessor.process(update);
+        // Передаем update в процессор
+        updateProcessor.process(update);
 
-        if (result != null) {
-            System.out.println("[BOT] Отправляю сообщение в чат " + chatId);
-            String messagePreview = result.getMessage().length() > 50
-                    ? result.getMessage().substring(0, 50) + "..."
-                    : result.getMessage();
-            System.out.println("[BOT] Текст: " + messagePreview);
-            System.out.println("[BOT] Клавиатура: " + (result.getKeyboard() != null ? "есть" : "нет"));
-
-            messageSender.send(this, chatId,
-                    result.getMessage(),
-                    result.getKeyboard());
-        } else {
-            System.out.println("[BOT] UpdateProcessor вернул null");
-        }
-
-        System.out.println("=".repeat(50));
+        log.debug("=".repeat(50));
     }
 
     @Override
