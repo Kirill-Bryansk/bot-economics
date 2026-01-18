@@ -27,6 +27,10 @@ public class ReplyKeyboardManager {
         strategies.put(ReplyKeyboardType.CATEGORY_SELECTION, new CategorySelectionStrategy());
         strategies.put(ReplyKeyboardType.CHILD_SELECTION, new ChildSelectionStrategy());
         strategies.put(ReplyKeyboardType.CHILD_CATEGORY_SELECTION, new ChildCategorySelectionStrategy());
+        strategies.put(ReplyKeyboardType.HOUSING_CATEGORY_SELECTION, new HousingCategoryStrategy());
+        strategies.put(ReplyKeyboardType.TRANSPORT_CATEGORY_SELECTION, new TransportCategoryStrategy());
+        strategies.put(ReplyKeyboardType.PRODUCTS_CATEGORY_SELECTION, new ProductsCategoryStrategy());
+        strategies.put(ReplyKeyboardType.MISCELLANEOUS_CATEGORY_SELECTION, new MiscellaneousCategoryStrategy()); // НОВОЕ
         strategies.put(ReplyKeyboardType.AMOUNT_INPUT, new AmountInputStrategy());
         strategies.put(ReplyKeyboardType.CONFIRMATION, new ConfirmationStrategy());
     }
@@ -69,6 +73,18 @@ public class ReplyKeyboardManager {
 
             case "CHILD_CATEGORY_SELECTION":
                 return ReplyKeyboardType.CHILD_CATEGORY_SELECTION;
+
+            case "HOUSING_CATEGORY_SELECTION":
+                return ReplyKeyboardType.HOUSING_CATEGORY_SELECTION;
+
+            case "TRANSPORT_CATEGORY_SELECTION":
+                return ReplyKeyboardType.TRANSPORT_CATEGORY_SELECTION;
+
+            case "PRODUCTS_CATEGORY_SELECTION":
+                return ReplyKeyboardType.PRODUCTS_CATEGORY_SELECTION;
+
+            case "MISCELLANEOUS_CATEGORY_SELECTION": // НОВОЕ
+                return ReplyKeyboardType.MISCELLANEOUS_CATEGORY_SELECTION;
 
             case "AMOUNT_INPUT":
                 return ReplyKeyboardType.AMOUNT_INPUT;

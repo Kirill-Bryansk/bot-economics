@@ -1,12 +1,18 @@
 package ru.boteconomics.bot.core.error.handler;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.boteconomics.bot.core.buttons.*;
 import ru.boteconomics.bot.core.response.HandlerResponse;
+import ru.boteconomics.bot.core.validation.AmountValidator;
+
 import java.math.BigDecimal;
 
 @Component
 public class InputErrorHandler {
+
+    @Autowired
+    private AmountValidator amountValidator;
 
     public String validateInput(String input, String currentStateId) {
         // Действия всегда валидны
@@ -27,6 +33,18 @@ public class InputErrorHandler {
             case "CHILD_CATEGORY_SELECTION":
                 return ChildCategoryButton.isChildCategory(input) ? null : "Выберите категорию для ребенка";
 
+            case "HOUSING_CATEGORY_SELECTION":
+                return HousingCategoryButton.isHousingCategory(input) ? null : "Выберите подкатегорию из списка";
+
+            case "TRANSPORT_CATEGORY_SELECTION":
+                return TransportCategoryButton.isTransportCategory(input) ? null : "Выберите подкатегорию из списка";
+
+            case "PRODUCTS_CATEGORY_SELECTION":
+                return ProductsCategoryButton.isProductsCategory(input) ? null : "Выберите подкатегорию из списка";
+
+            case "MISCELLANEOUS_CATEGORY_SELECTION": // НОВОЕ
+                return MiscellaneousCategoryButton.isMiscellaneousCategory(input) ? null : "Выберите подкатегорию из списка";
+
             case "AMOUNT_INPUT":
                 return validateAmount(input);
 
@@ -40,27 +58,7 @@ public class InputErrorHandler {
     }
 
     private String validateAmount(String input) {
-        try {
-            // Заменяем запятую на точку для парсинга
-            String normalized = input.replace(',', '.');
-            BigDecimal amount = new BigDecimal(normalized);
-
-            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-                return "Сумма должна быть больше нуля";
-            }
-
-            // Опционально: проверка на слишком большое число
-            if (amount.compareTo(new BigDecimal("1000000")) > 0) {
-                return "Сумма слишком большая (максимум 1 000 000)";
-            }
-
-            return null; // Валидно
-
-        } catch (NumberFormatException e) {
-            return "Пожалуйста, введите число (например: 1500 или 99.50)";
-        } catch (ArithmeticException e) {
-            return "Некорректное число";
-        }
+        return amountValidator.validate(input);
     }
 
     /**
@@ -85,6 +83,10 @@ public class InputErrorHandler {
             case "CATEGORY_SELECTION": return "выбор категории";
             case "CHILD_SELECTION": return "выбор ребенка";
             case "CHILD_CATEGORY_SELECTION": return "выбор категории для ребенка";
+            case "HOUSING_CATEGORY_SELECTION": return "выбор подкатегории жилья";
+            case "TRANSPORT_CATEGORY_SELECTION": return "выбор подкатегории транспорта";
+            case "PRODUCTS_CATEGORY_SELECTION": return "выбор подкатегории продуктов";
+            case "MISCELLANEOUS_CATEGORY_SELECTION": return "выбор подкатегории для 'Разное'"; // НОВОЕ
             case "AMOUNT_INPUT": return "ввод суммы";
             case "CONFIRMATION": return "подтверждение";
             default: return "неизвестный шаг";

@@ -1,5 +1,8 @@
 package ru.boteconomics.bot.core.session;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -7,6 +10,9 @@ import java.time.LocalDateTime;
  * Сессия пользователя для хранения данных во время диалога.
  * Является простым контейнером данных без бизнес-логики.
  */
+@Getter
+@Setter
+@ToString
 public class UserSession {
 
     // Текущее состояние диалога
@@ -16,60 +22,15 @@ public class UserSession {
     private String category;           // Выбранная категория
     private String childName;          // Имя ребенка (если категория = дети)
     private String childCategory;      // Категория ребенка (школа/секции/одежда)
+    private String housingCategory;    // Подкатегория жилья (если категория = жилье)
+    private String transportCategory;  // Подкатегория транспорта (если категория = транспорт)
+    private String productsCategory;   // Подкатегория продуктов (если категория = продукты)
+    private String miscellaneousCategory; // Подкатегория "Разное" (если категория = разное) // НОВОЕ
     private BigDecimal amount;         // Введенная сумма
     private LocalDateTime timestamp;   // Время создания сессии
 
-    // Временные данные (опционально, для расширения)
-    // private Map<String, Object> temporaryData = new HashMap<>();
-
     public UserSession() {
         this.timestamp = LocalDateTime.now();
-    }
-
-    // ========== ГЕТТЕРЫ И СЕТТЕРЫ ==========
-
-    public String getCurrentStateId() {
-        return currentStateId;
-    }
-
-    public void setCurrentStateId(String currentStateId) {
-        this.currentStateId = currentStateId;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getChildName() {
-        return childName;
-    }
-
-    public void setChildName(String childName) {
-        this.childName = childName;
-    }
-
-    public String getChildCategory() {
-        return childCategory;
-    }
-
-    public void setChildCategory(String childCategory) {
-        this.childCategory = childCategory;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
     }
 
     // ========== МЕТОДЫ СБРОСА ==========
@@ -82,6 +43,10 @@ public class UserSession {
         this.category = null;
         this.childName = null;
         this.childCategory = null;
+        this.housingCategory = null;
+        this.transportCategory = null;
+        this.productsCategory = null;
+        this.miscellaneousCategory = null; // НОВОЕ
         this.amount = null;
         this.timestamp = LocalDateTime.now();
     }
@@ -92,6 +57,10 @@ public class UserSession {
     public void resetForCategorySelection() {
         this.childName = null;
         this.childCategory = null;
+        this.housingCategory = null;
+        this.transportCategory = null;
+        this.productsCategory = null;
+        this.miscellaneousCategory = null; // НОВОЕ
         this.amount = null;
     }
 
@@ -107,6 +76,34 @@ public class UserSession {
      * Сброс данных для возврата к выбору категории ребенка
      */
     public void resetForChildCategorySelection() {
+        this.amount = null;
+    }
+
+    /**
+     * Сброс данных для возврата к выбору подкатегории жилья
+     */
+    public void resetForHousingCategorySelection() {
+        this.amount = null;
+    }
+
+    /**
+     * Сброс данных для возврата к выбору подкатегории транспорта
+     */
+    public void resetForTransportCategorySelection() {
+        this.amount = null;
+    }
+
+    /**
+     * Сброс данных для возврата к выбору подкатегории продуктов
+     */
+    public void resetForProductsCategorySelection() {
+        this.amount = null;
+    }
+
+    /**
+     * Сброс данных для возврата к выбору подкатегории "Разное" // НОВОЕ
+     */
+    public void resetForMiscellaneousCategorySelection() {
         this.amount = null;
     }
 
@@ -135,6 +132,34 @@ public class UserSession {
     }
 
     /**
+     * Проверяет, выбрана ли категория "Жилье"
+     */
+    public boolean isHousingCategory() {
+        return category != null && category.equals("🏠 Жилье");
+    }
+
+    /**
+     * Проверяет, выбрана ли категория "Транспорт"
+     */
+    public boolean isTransportCategory() {
+        return category != null && category.equals("🚗 Транспорт");
+    }
+
+    /**
+     * Проверяет, выбрана ли категория "Продукты"
+     */
+    public boolean isProductsCategory() {
+        return category != null && category.equals("🛒 Продукты");
+    }
+
+    /**
+     * Проверяет, выбрана ли категория "Разное" // НОВОЕ
+     */
+    public boolean isMiscellaneousCategory() {
+        return category != null && category.equals("📦 Разное");
+    }
+
+    /**
      * Проверяет, все ли обязательные данные для сохранения заполнены
      */
     public boolean isReadyForSaving() {
@@ -147,6 +172,26 @@ public class UserSession {
             return childName != null && childCategory != null;
         }
 
+        // Если категория "Жилье", проверяем подкатегорию
+        if (isHousingCategory()) {
+            return housingCategory != null;
+        }
+
+        // Если категория "Транспорт", проверяем подкатегорию
+        if (isTransportCategory()) {
+            return transportCategory != null;
+        }
+
+        // Если категория "Продукты", проверяем подкатегорию
+        if (isProductsCategory()) {
+            return productsCategory != null;
+        }
+
+        // Если категория "Разное", проверяем подкатегорию // НОВОЕ
+        if (isMiscellaneousCategory()) {
+            return miscellaneousCategory != null;
+        }
+
         return true;
     }
 
@@ -155,13 +200,8 @@ public class UserSession {
      */
     public String toDebugString() {
         return String.format(
-                "UserSession{state=%s, category=%s, childName=%s, childCategory=%s, amount=%s}",
-                currentStateId, category, childName, childCategory, amount
+                "UserSession{state=%s, category=%s, childName=%s, childCategory=%s, housingCategory=%s, transportCategory=%s, productsCategory=%s, miscellaneousCategory=%s, amount=%s}", // НОВОЕ: добавлен miscellaneousCategory
+                currentStateId, category, childName, childCategory, housingCategory, transportCategory, productsCategory, miscellaneousCategory, amount
         );
-    }
-
-    @Override
-    public String toString() {
-        return toDebugString();
     }
 }

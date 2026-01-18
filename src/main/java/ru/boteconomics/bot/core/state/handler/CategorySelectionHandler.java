@@ -7,7 +7,7 @@ import ru.boteconomics.bot.core.response.HandlerResponse;
 import ru.boteconomics.bot.core.session.UserSession;
 
 /**
- * Обработчик выбора категории (заглушка для тестирования)
+ * Обработчик выбора категории
  * Состояние: CATEGORY_SELECTION
  */
 @Slf4j
@@ -41,7 +41,40 @@ public class CategorySelectionHandler extends BaseStateHandler {
                         "Вы выбрали категорию: " + input + "\nТеперь выберите ребенка:",
                         "CHILD_SELECTION"
                 );
-            } else {
+            }
+            // Проверяем, выбрана ли категория "Жилье"
+            else if (CategoryButton.HOUSING.equals(input)) {
+                logTransition(getStateId(), "HOUSING_CATEGORY_SELECTION");
+                return HandlerResponse.next(
+                        "Вы выбрали категорию: " + input + "\nТеперь выберите подкатегорию:",
+                        "HOUSING_CATEGORY_SELECTION"
+                );
+            }
+            // Проверяем, выбрана ли категория "Транспорт"
+            else if (CategoryButton.TRANSPORT.equals(input)) {
+                logTransition(getStateId(), "TRANSPORT_CATEGORY_SELECTION");
+                return HandlerResponse.next(
+                        "Вы выбрали категорию: " + input + "\nТеперь выберите подкатегорию:",
+                        "TRANSPORT_CATEGORY_SELECTION"
+                );
+            }
+            // Проверяем, выбрана ли категория "Продукты"
+            else if (CategoryButton.FOOD.equals(input)) {
+                logTransition(getStateId(), "PRODUCTS_CATEGORY_SELECTION");
+                return HandlerResponse.next(
+                        "Вы выбрали категорию: " + input + "\nТеперь выберите подкатегорию:",
+                        "PRODUCTS_CATEGORY_SELECTION"
+                );
+            }
+            // НОВОЕ: Проверяем, выбрана ли категория "Разное"
+            else if (CategoryButton.OTHER.equals(input)) {
+                logTransition(getStateId(), "MISCELLANEOUS_CATEGORY_SELECTION");
+                return HandlerResponse.next(
+                        "Вы выбрали категорию: " + input + "\nТеперь выберите подкатегорию:",
+                        "MISCELLANEOUS_CATEGORY_SELECTION"
+                );
+            }
+            else {
                 // Для обычных категорий переходим к вводу суммы
                 logTransition(getStateId(), "AMOUNT_INPUT");
                 return HandlerResponse.next(
