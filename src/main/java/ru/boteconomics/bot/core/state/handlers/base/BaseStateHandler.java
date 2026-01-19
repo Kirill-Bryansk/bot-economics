@@ -1,5 +1,4 @@
-
-        package ru.boteconomics.bot.core.state.handler;
+package ru.boteconomics.bot.core.state.handlers.base;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,11 @@ import ru.boteconomics.bot.core.state.State;
 /**
  * Базовый абстрактный класс для всех обработчиков состояний.
  * Содержит общую логику проверки ввода и обработки действий.
+ *
+ * Порядок обработки:
+ * 1. Проверка действий (Назад/Отмена/Подтвердить) - если действие, обрабатываем сразу
+ * 2. Валидация обычного ввода через InputErrorHandler
+ * 3. Обработка валидного ввода в processValidInput()
  */
 @Slf4j
 public abstract class BaseStateHandler implements State {
@@ -20,22 +24,30 @@ public abstract class BaseStateHandler implements State {
 
     /**
      * Основной метод обработки ввода.
-     * 1. Проверяет валидность ввода через InputErrorHandler
-     * 2. Если есть ошибка - возвращает её
+     * Порядок обработки:
+     * 1. Проверяет, является ли ввод действием (Назад/Отмена/Подтвердить)
+     * 2. Если нет - проверяет валидность ввода через InputErrorHandler
      * 3. Если ввод валиден - вызывает processValidInput
      */
     @Override
     public HandlerResponse handle(String input, UserSession session) {
         log.debug("{}: обработка ввода '{}'", getClass().getSimpleName(), input);
 
-        // Проверка ввода через InputErrorHandler
+        // 1. Сначала проверяем действия (Назад/Отмена/Подтвердить)
+        HandlerResponse actionResponse = handleActionIfNeeded(input, session);
+        if (actionResponse != null) {
+            log.debug("Обработка действия в состоянии {}: {}", getStateId(), input);
+            return actionResponse;
+        }
+
+        // 2. Если не действие - проверяем валидность обычного ввода
         HandlerResponse errorResponse = inputErrorHandler.validateAndCreateError(input, getStateId());
         if (errorResponse != null) {
             log.debug("Ошибка ввода в состоянии {}: {}", getStateId(), errorResponse.getMessage());
             return errorResponse;
         }
 
-        // Ввод валиден - обрабатываем
+        // 3. Ввод валиден и не является действием - обрабатываем бизнес-логику
         try {
             return processValidInput(input, session);
         } catch (Exception e) {
@@ -50,6 +62,7 @@ public abstract class BaseStateHandler implements State {
     /**
      * Абстрактный метод для обработки валидного ввода.
      * Реализуется в конкретных обработчиках.
+     * СЮДА попадают только НЕ-действия (обычный ввод).
      */
     protected abstract HandlerResponse processValidInput(String input, UserSession session);
 
@@ -83,13 +96,6 @@ public abstract class BaseStateHandler implements State {
                 "Действие 'Подтвердить' не поддерживается в этом состоянии.",
                 getStateId()
         );
-    }
-
-    /**
-     * Проверяет, является ли ввод действием (Назад/Отмена/Подтвердить).
-     */
-    protected boolean isAction(String input) {
-        return ru.boteconomics.bot.core.buttons.ActionButton.isAction(input);
     }
 
     /**

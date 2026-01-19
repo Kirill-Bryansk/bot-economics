@@ -1,20 +1,20 @@
-package ru.boteconomics.bot.core.state.refactored.subcategory;
+package ru.boteconomics.bot.core.state.handlers.impl.subcategory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.boteconomics.bot.core.buttons.ProductsCategoryButton;
 import ru.boteconomics.bot.core.session.UserSession;
-import ru.boteconomics.bot.core.state.refactored.base.BaseSubcategoryHandler;
-import ru.boteconomics.bot.core.state.refactored.service.SubcategoryProcessor;
+import ru.boteconomics.bot.core.state.handlers.base.BaseSubcategoryHandler;
+import ru.boteconomics.bot.core.state.handlers.processors.SubcategoryProcessor;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Slf4j
-@Component("refactoredProductsCategoryHandler")
-public class RefactoredProductsCategoryHandler extends BaseSubcategoryHandler {
+@Component
+public class ProductsCategoryHandler extends BaseSubcategoryHandler {
 
-    public RefactoredProductsCategoryHandler(SubcategoryProcessor subcategoryProcessor) {
+    public ProductsCategoryHandler(SubcategoryProcessor subcategoryProcessor) {
         super(subcategoryProcessor);
         log.info("Создан RefactoredProductsCategoryHandler");
     }

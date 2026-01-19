@@ -1,11 +1,11 @@
-package ru.boteconomics.bot.core.state.refactored.subcategory;
+package ru.boteconomics.bot.core.state.handlers.impl.subcategory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.boteconomics.bot.core.buttons.TransportCategoryButton;
 import ru.boteconomics.bot.core.session.UserSession;
-import ru.boteconomics.bot.core.state.refactored.base.BaseSubcategoryHandler;
-import ru.boteconomics.bot.core.state.refactored.service.SubcategoryProcessor;
+import ru.boteconomics.bot.core.state.handlers.base.BaseSubcategoryHandler;
+import ru.boteconomics.bot.core.state.handlers.processors.SubcategoryProcessor;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -15,10 +15,10 @@ import java.util.function.Predicate;
  * Использует BaseSubcategoryHandler для устранения дублирования кода.
  */
 @Slf4j
-@Component("refactoredTransportCategoryHandler") // Уникальное имя бина!
-public class RefactoredTransportCategoryHandler extends BaseSubcategoryHandler {
+@Component
+public class TransportCategoryHandler extends BaseSubcategoryHandler {
 
-    public RefactoredTransportCategoryHandler(SubcategoryProcessor subcategoryProcessor) {
+    public TransportCategoryHandler(SubcategoryProcessor subcategoryProcessor) {
         super(subcategoryProcessor);
         log.info("Создан RefactoredTransportCategoryHandler");
     }

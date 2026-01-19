@@ -7,14 +7,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import ru.boteconomics.bot.core.state.ExpenseStateMachine;
 import ru.boteconomics.bot.core.state.State;
-import ru.boteconomics.bot.core.state.handler.HousingCategoryHandler;
-import ru.boteconomics.bot.core.state.handler.MiscellaneousCategoryHandler;
-import ru.boteconomics.bot.core.state.handler.ProductsCategoryHandler;
-import ru.boteconomics.bot.core.state.handler.TransportCategoryHandler;
-import ru.boteconomics.bot.core.state.refactored.subcategory.RefactoredHousingCategoryHandler;
-import ru.boteconomics.bot.core.state.refactored.subcategory.RefactoredMiscellaneousCategoryHandler;
-import ru.boteconomics.bot.core.state.refactored.subcategory.RefactoredProductsCategoryHandler;
-import ru.boteconomics.bot.core.state.refactored.subcategory.RefactoredTransportCategoryHandler;
 
 import java.util.List;
 
@@ -26,77 +18,44 @@ public class StateMachineConfig {
     private final ExpenseStateMachine stateMachine;
     private final List<State> allStates; // Spring соберет все бины, реализующие State
 
-    // Инжектим новые обработчики по именам бинов
-    private final RefactoredMiscellaneousCategoryHandler refactoredMiscellaneousCategoryHandler;
-    private final RefactoredHousingCategoryHandler refactoredHousingCategoryHandler;
-    private final RefactoredTransportCategoryHandler refactoredTransportCategoryHandler;
-    private final RefactoredProductsCategoryHandler refactoredProductsCategoryHandler;
-
     @EventListener(ContextRefreshedEvent.class)
     public void registerAllStates() {
-        log.info("Регистрация состояний в StateMachine...");
+        log.info("=================== РЕГИСТРАЦИЯ СОСТОЯНИЙ ===================");
+        log.info("Начинаю регистрацию состояний в StateMachine...");
+        log.info("Найдено всего {} состояний в контексте Spring", allStates.size());
 
         int registered = 0;
-        int skipped = 0;
+        int errors = 0;
 
         for (State state : allStates) {
+            String stateClassName = state.getClass().getSimpleName();
             try {
                 String stateId = state.getStateId();
-
-                // Пропускаем старые обработчики, если есть новые
-                if (state instanceof MiscellaneousCategoryHandler) {
-                    log.info("Пропускаем старый MiscellaneousCategoryHandler, используем переработанный");
-                    skipped++;
-                    continue;
-                }
-
-                if (state instanceof HousingCategoryHandler) {
-                    log.info("Пропускаем старый HousingCategoryHandler, используем переработанный");
-                    skipped++;
-                    continue;
-                }
-
-                if (state instanceof TransportCategoryHandler) {
-                    log.info("Пропускаем старый TransportCategoryHandler, используем переработанный");
-                    skipped++;
-                    continue;
-                }
-
-                if (state instanceof ProductsCategoryHandler) {
-                    log.info("Пропускаем старый ProductsCategoryHandler, используем переработанный");
-                    skipped++;
-                    continue;
-                }
-
                 stateMachine.registerState(state);
-                log.debug("Зарегистрировано состояние: {}", stateId);
+                log.info("✅ Успешно зарегистрировано состояние: {} [ID: {}]",
+                        stateClassName, stateId);
                 registered++;
 
             } catch (Exception e) {
-                log.error("Ошибка регистрации состояния {}: {}",
-                        state.getClass().getSimpleName(), e.getMessage());
+                log.error("❌ Ошибка регистрации состояния {}: {}",
+                        stateClassName, e.getMessage(), e);
+                errors++;
             }
         }
 
-        // Регистрируем новые переработанные обработчики
-        registerRefactoredHandler(refactoredMiscellaneousCategoryHandler);
-        registerRefactoredHandler(refactoredHousingCategoryHandler);
-        registerRefactoredHandler(refactoredTransportCategoryHandler);
-        registerRefactoredHandler(refactoredProductsCategoryHandler);
+        log.info("=================== ИТОГ РЕГИСТРАЦИИ ===================");
+        log.info("Всего состояний для регистрации: {}", allStates.size());
+        log.info("Успешно зарегистрировано: {}", registered);
+        log.info("Ошибок при регистрации: {}", errors);
 
-        log.info("Успешно зарегистрировано {} состояний, пропущено: {}",
-                registered, skipped);
-        stateMachine.printRegisteredStates();
-    }
-
-    private void registerRefactoredHandler(State handler) {
-        try {
-            stateMachine.registerState(handler);
-            log.debug("Зарегистрировано переработанное состояние: {}",
-                    handler.getStateId());
-        } catch (Exception e) {
-            log.error("Ошибка регистрации переработанного обработчика {}: {}",
-                    handler.getClass().getSimpleName(), e.getMessage());
+        if (errors == 0) {
+            log.info("✅ Все состояния успешно зарегистрированы!");
+        } else {
+            log.warn("⚠️  Зарегистрировано не все состояния! Есть {} ошибок", errors);
         }
+
+        log.info("Вывод списка зарегистрированных состояний:");
+        stateMachine.printRegisteredStates();
+        log.info("=================== КОНЕЦ РЕГИСТРАЦИИ ===================");
     }
 }

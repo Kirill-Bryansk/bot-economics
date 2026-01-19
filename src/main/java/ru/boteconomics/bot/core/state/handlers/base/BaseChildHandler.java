@@ -1,23 +1,23 @@
-package ru.boteconomics.bot.core.state.refactored.base;
+package ru.boteconomics.bot.core.state.handlers.base;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.boteconomics.bot.core.response.HandlerResponse;
 import ru.boteconomics.bot.core.session.UserSession;
-import ru.boteconomics.bot.core.state.refactored.service.SubcategoryProcessor;
+import ru.boteconomics.bot.core.state.handlers.processors.ChildProcessor;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Базовый класс для всех обработчиков подкатегорий.
+ * Базовый класс для всех обработчиков, связанных с детьми.
  * Содержит общую логику и делегирует специфичные части наследникам.
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class BaseSubcategoryHandler extends ru.boteconomics.bot.core.state.handler.BaseStateHandler {
+public abstract class BaseChildHandler extends BaseStateHandler {
 
-    protected final SubcategoryProcessor subcategoryProcessor;
+    protected final ChildProcessor childProcessor;
 
     /**
      * Получить валидатор для проверки ввода
@@ -34,9 +34,19 @@ public abstract class BaseSubcategoryHandler extends ru.boteconomics.bot.core.st
      */
     protected abstract String getDescription();
 
+    /**
+     * Получить следующее состояние
+     */
+    protected abstract String getNextState();
+
+    /**
+     * Получить сообщение о выборе
+     */
+    protected abstract String getSelectionMessage(String input);
+
     @Override
     protected HandlerResponse processValidInput(String input, UserSession session) {
-        log.debug("BaseSubcategoryHandler: обработка ввода '{}' для состояния {}",
+        log.debug("BaseChildHandler: обработка ввода '{}' для состояния {}",
                 input, getStateId());
 
         // 1. Проверяем действия (Назад/Отмена)
@@ -46,13 +56,15 @@ public abstract class BaseSubcategoryHandler extends ru.boteconomics.bot.core.st
         }
 
         // 2. Делегируем обработку процессору
-        return subcategoryProcessor.process(
+        return childProcessor.process(
                 input,
                 session,
                 getStateId(),
                 getValidator(),
                 getSaver(input),
-                getDescription()
+                getDescription(),
+                getNextState(),
+                getSelectionMessage(input)
         );
     }
 

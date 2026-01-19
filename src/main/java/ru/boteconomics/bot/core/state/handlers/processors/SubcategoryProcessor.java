@@ -1,4 +1,4 @@
-package ru.boteconomics.bot.core.state.refactored.service;
+package ru.boteconomics.bot.core.state.handlers.processors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
