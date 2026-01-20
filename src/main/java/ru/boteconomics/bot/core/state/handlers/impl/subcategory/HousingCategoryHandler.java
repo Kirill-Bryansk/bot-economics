@@ -3,24 +3,24 @@ package ru.boteconomics.bot.core.state.handlers.impl.subcategory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.boteconomics.bot.core.buttons.HousingCategoryButton;
+import ru.boteconomics.bot.core.response.HandlerResponse;
 import ru.boteconomics.bot.core.session.UserSession;
-import ru.boteconomics.bot.core.state.handlers.base.BaseSubcategoryHandler;
+import ru.boteconomics.bot.core.state.handlers.base.BaseStateHandler;
 import ru.boteconomics.bot.core.state.handlers.processors.SubcategoryProcessor;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 /**
- * Переработанный обработчик для подкатегорий "Жилье".
- * Использует BaseSubcategoryHandler для устранения дублирования кода.
+ * Обработчик для подкатегорий "Жилье".
+ * Наследует напрямую от BaseStateHandler для устранения избыточных уровней абстракции.
  */
 @Slf4j
 @Component
-public class HousingCategoryHandler extends BaseSubcategoryHandler {
+public class HousingCategoryHandler extends BaseStateHandler {
+
+    private final SubcategoryProcessor subcategoryProcessor;
 
     public HousingCategoryHandler(SubcategoryProcessor subcategoryProcessor) {
-        super(subcategoryProcessor);
-        log.info("Создан RefactoredHousingCategoryHandler");
+        this.subcategoryProcessor = subcategoryProcessor;
+        log.info("Создан HousingCategoryHandler с прямой зависимостью от BaseStateHandler");
     }
 
     @Override
@@ -29,26 +29,23 @@ public class HousingCategoryHandler extends BaseSubcategoryHandler {
     }
 
     @Override
-    protected Predicate<String> getValidator() {
-        return HousingCategoryButton::isHousingCategory;
-    }
+    protected HandlerResponse processValidInput(String input, UserSession session) {
+        log.debug("HousingCategoryHandler: обработка ввода '{}'", input);
 
-    @Override
-    protected Consumer<UserSession> getSaver(String input) {
-        return session -> {
-            session.setHousingCategory(input);
-            log.debug("Сохранена подкатегория 'Жилье': {}", input);
-        };
-    }
+        // 1. Проверяем валидность ввода
+        if (!HousingCategoryButton.isHousingCategory(input)) {
+            log.warn("Ввод '{}' не является валидной подкатегорией жилья", input);
+            return HandlerResponse.stay(
+                    "Пожалуйста, выберите подкатегорию жилья из списка",
+                    getStateId()
+            );
+        }
 
-    @Override
-    protected String getDescription() {
-        return "подкатегория жилья";
-    }
+        // 2. Сохраняем подкатегорию в сессию
+        session.setHousingCategory(input);
+        log.info("Выбрана и сохранена подкатегория жилья: {}", input);
 
-    // Можно переопределить handleBackAction если нужно особое поведение
-    // @Override
-    // protected HandlerResponse handleBackAction(UserSession session) {
-    //     // Специфичная логика для жилья
-    // }
+        // 3. Делегируем процессору стандартную обработку
+        return subcategoryProcessor.process(input, session, getStateId());
+    }
 }

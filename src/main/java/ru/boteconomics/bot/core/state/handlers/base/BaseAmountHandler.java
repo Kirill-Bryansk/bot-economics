@@ -1,3 +1,4 @@
+/*
 package ru.boteconomics.bot.core.state.handlers.base;
 
 import lombok.RequiredArgsConstructor;
@@ -9,18 +10,22 @@ import ru.boteconomics.bot.core.state.handlers.processors.AmountProcessor;
 import java.math.BigDecimal;
 import java.util.function.Function;
 
+*/
 /**
  * Базовый класс для обработчика ввода суммы.
- */
+ *//*
+
 @Slf4j
 @RequiredArgsConstructor
 public abstract class BaseAmountHandler extends BaseStateHandler {
 
     protected final AmountProcessor amountProcessor;
 
-    /**
+    */
+/**
      * Получить функцию для валидации и парсинга суммы
-     */
+     *//*
+
     protected abstract Function<String, BigDecimal> getAmountParser();
 
     @Override
@@ -47,4 +52,4 @@ public abstract class BaseAmountHandler extends BaseStateHandler {
     protected HandlerResponse handleBackAction(UserSession session) {
         return amountProcessor.handleBackAction(session);
     }
-}
+}*/

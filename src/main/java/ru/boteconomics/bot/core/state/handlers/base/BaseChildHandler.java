@@ -1,3 +1,4 @@
+/*
 package ru.boteconomics.bot.core.state.handlers.base;
 
 import lombok.RequiredArgsConstructor;
@@ -9,39 +10,51 @@ import ru.boteconomics.bot.core.state.handlers.processors.ChildProcessor;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+*/
 /**
  * Базовый класс для всех обработчиков, связанных с детьми.
  * Содержит общую логику и делегирует специфичные части наследникам.
- */
+ *//*
+
 @Slf4j
 @RequiredArgsConstructor
 public abstract class BaseChildHandler extends BaseStateHandler {
 
     protected final ChildProcessor childProcessor;
 
-    /**
+    */
+/**
      * Получить валидатор для проверки ввода
-     */
+     *//*
+
     protected abstract Predicate<String> getValidator();
 
-    /**
+    */
+/**
      * Получить функцию для сохранения данных в сессию
-     */
+     *//*
+
     protected abstract Consumer<UserSession> getSaver(String input);
 
-    /**
+    */
+/**
      * Получить описание для логирования
-     */
+     *//*
+
     protected abstract String getDescription();
 
-    /**
+    */
+/**
      * Получить следующее состояние
-     */
+     *//*
+
     protected abstract String getNextState();
 
-    /**
+    */
+/**
      * Получить сообщение о выборе
-     */
+     *//*
+
     protected abstract String getSelectionMessage(String input);
 
     @Override
@@ -68,10 +81,12 @@ public abstract class BaseChildHandler extends BaseStateHandler {
         );
     }
 
-    /**
+    */
+/**
      * Вспомогательный метод для логирования
-     */
+     *//*
+
     protected void logSelection(String value) {
         log.info("[{}] Выбрана {}: {}", getStateId(), getDescription(), value);
     }
-}
+}*/

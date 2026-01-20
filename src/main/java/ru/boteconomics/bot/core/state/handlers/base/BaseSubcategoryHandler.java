@@ -1,3 +1,4 @@
+/*
 package ru.boteconomics.bot.core.state.handlers.base;
 
 import lombok.RequiredArgsConstructor;
@@ -9,29 +10,37 @@ import ru.boteconomics.bot.core.state.handlers.processors.SubcategoryProcessor;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+*/
 /**
  * Базовый класс для всех обработчиков подкатегорий.
  * Содержит общую логику и делегирует специфичные части наследникам.
- */
+ *//*
+
 @Slf4j
 @RequiredArgsConstructor
 public abstract class BaseSubcategoryHandler extends BaseStateHandler {
 
     protected final SubcategoryProcessor subcategoryProcessor;
 
-    /**
+    */
+/**
      * Получить валидатор для проверки ввода
-     */
+     *//*
+
     protected abstract Predicate<String> getValidator();
 
-    /**
+    */
+/**
      * Получить функцию для сохранения данных в сессию
-     */
+     *//*
+
     protected abstract Consumer<UserSession> getSaver(String input);
 
-    /**
+    */
+/**
      * Получить описание для логирования
-     */
+     *//*
+
     protected abstract String getDescription();
 
     @Override
@@ -56,10 +65,12 @@ public abstract class BaseSubcategoryHandler extends BaseStateHandler {
         );
     }
 
-    /**
+    */
+/**
      * Вспомогательный метод для логирования
-     */
+     *//*
+
     protected void logSelection(String value) {
         log.info("[{}] Выбрана {}: {}", getStateId(), getDescription(), value);
     }
-}
+}*/

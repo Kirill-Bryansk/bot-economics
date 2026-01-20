@@ -3,20 +3,20 @@ package ru.boteconomics.bot.core.state.handlers.impl.subcategory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.boteconomics.bot.core.buttons.ProductsCategoryButton;
+import ru.boteconomics.bot.core.response.HandlerResponse;
 import ru.boteconomics.bot.core.session.UserSession;
-import ru.boteconomics.bot.core.state.handlers.base.BaseSubcategoryHandler;
+import ru.boteconomics.bot.core.state.handlers.base.BaseStateHandler;
 import ru.boteconomics.bot.core.state.handlers.processors.SubcategoryProcessor;
-
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 @Slf4j
 @Component
-public class ProductsCategoryHandler extends BaseSubcategoryHandler {
+public class ProductsCategoryHandler extends BaseStateHandler {
+
+    private final SubcategoryProcessor subcategoryProcessor;
 
     public ProductsCategoryHandler(SubcategoryProcessor subcategoryProcessor) {
-        super(subcategoryProcessor);
-        log.info("Создан RefactoredProductsCategoryHandler");
+        this.subcategoryProcessor = subcategoryProcessor;
+        log.info("Создан ProductsCategoryHandler с прямой зависимостью от BaseStateHandler");
     }
 
     @Override
@@ -25,20 +25,23 @@ public class ProductsCategoryHandler extends BaseSubcategoryHandler {
     }
 
     @Override
-    protected Predicate<String> getValidator() {
-        return ProductsCategoryButton::isProductsCategory;
-    }
+    protected HandlerResponse processValidInput(String input, UserSession session) {
+        log.debug("ProductsCategoryHandler: обработка ввода '{}'", input);
 
-    @Override
-    protected Consumer<UserSession> getSaver(String input) {
-        return session -> {
-            session.setProductsCategory(input);
-            log.debug("Сохранена подкатегория 'Продукты': {}", input);
-        };
-    }
+        // 1. Проверяем валидность ввода
+        if (!ProductsCategoryButton.isProductsCategory(input)) {
+            log.warn("Ввод '{}' не является валидной подкатегорией продуктов", input);
+            return HandlerResponse.stay(
+                    "Пожалуйста, выберите подкатегорию продуктов из списка",
+                    getStateId()
+            );
+        }
 
-    @Override
-    protected String getDescription() {
-        return "подкатегория продуктов";
+        // 2. Сохраняем подкатегорию в сессию
+        session.setProductsCategory(input);
+        log.info("Выбрана и сохранена подкатегория продуктов: {}", input);
+
+        // 3. Делегируем процессору стандартную обработку
+        return subcategoryProcessor.process(input, session, getStateId());
     }
 }

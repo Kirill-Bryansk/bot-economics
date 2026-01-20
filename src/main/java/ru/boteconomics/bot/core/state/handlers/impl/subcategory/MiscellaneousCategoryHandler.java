@@ -5,23 +5,22 @@ import org.springframework.stereotype.Component;
 import ru.boteconomics.bot.core.buttons.MiscellaneousCategoryButton;
 import ru.boteconomics.bot.core.response.HandlerResponse;
 import ru.boteconomics.bot.core.session.UserSession;
-import ru.boteconomics.bot.core.state.handlers.base.BaseSubcategoryHandler;
+import ru.boteconomics.bot.core.state.handlers.base.BaseStateHandler;
 import ru.boteconomics.bot.core.state.handlers.processors.SubcategoryProcessor;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 /**
- * Переработанный обработчик для подкатегорий "Разное".
- * Использует BaseSubcategoryHandler для устранения дублирования кода.
+ * Обработчик для подкатегорий "Разное".
+ * Наследует напрямую от BaseStateHandler для устранения избыточных уровней абстракции.
  */
 @Slf4j
 @Component
-public class MiscellaneousCategoryHandler extends BaseSubcategoryHandler {
+public class MiscellaneousCategoryHandler extends BaseStateHandler {
+
+    private final SubcategoryProcessor subcategoryProcessor;
 
     public MiscellaneousCategoryHandler(SubcategoryProcessor subcategoryProcessor) {
-        super(subcategoryProcessor);
-        log.info("Создан RefactoredMiscellaneousCategoryHandler");
+        this.subcategoryProcessor = subcategoryProcessor;
+        log.info("Создан MiscellaneousCategoryHandler с прямой зависимостью от BaseStateHandler");
     }
 
     @Override
@@ -30,27 +29,29 @@ public class MiscellaneousCategoryHandler extends BaseSubcategoryHandler {
     }
 
     @Override
-    protected Predicate<String> getValidator() {
-        return MiscellaneousCategoryButton::isMiscellaneousCategory;
-    }
+    protected HandlerResponse processValidInput(String input, UserSession session) {
+        log.debug("MiscellaneousCategoryHandler: обработка ввода '{}'", input);
 
-    @Override
-    protected Consumer<UserSession> getSaver(String input) {
-        return session -> {
-            session.setMiscellaneousCategory(input);
-            log.debug("Сохранена подкатегория 'Разное': {}", input);
-        };
-    }
+        // 1. Проверяем валидность ввода
+        if (!MiscellaneousCategoryButton.isMiscellaneousCategory(input)) {
+            log.warn("Ввод '{}' не является валидной подкатегорией 'Разное'", input);
+            return HandlerResponse.stay(
+                    "Пожалуйста, выберите подкатегорию 'Разное' из списка",
+                    getStateId()
+            );
+        }
 
-    @Override
-    protected String getDescription() {
-        return "подкатегория 'Разное'";
+        // 2. Сохраняем подкатегорию в сессию
+        session.setMiscellaneousCategory(input);
+        log.info("Выбрана и сохранена подкатегория 'Разное': {}", input);
+
+        // 3. Делегируем процессору стандартную обработку
+        return subcategoryProcessor.process(input, session, getStateId());
     }
 
     @Override
     protected HandlerResponse handleBackAction(UserSession session) {
-        // Можно переопределить при необходимости
-        log.debug("Действие 'Назад' в RefactoredMiscellaneousCategoryHandler");
+        log.debug("Действие 'Назад' в MiscellaneousCategoryHandler");
         return super.handleBackAction(session);
     }
 }
