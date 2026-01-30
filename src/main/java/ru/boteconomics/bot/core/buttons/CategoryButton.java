@@ -9,7 +9,7 @@ public final class CategoryButton {
     public static final String HOUSING = "🏠 Жилье";
     public static final String FOOD = "🛒 Продукты";
     public static final String TRANSPORT = "🚗 Транспорт";
-    public static final String HEALTH = "💊 Здоровье";
+    public static final String HEALTH = "🏥 Здоровье";
     public static final String PERSONAL = "👚 Личное";
     public static final String OTHER = "📦 Разное";
     public static final String CHILDREN = "👶 Дети";

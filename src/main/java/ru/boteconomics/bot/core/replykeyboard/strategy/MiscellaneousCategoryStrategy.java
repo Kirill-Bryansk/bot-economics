@@ -19,25 +19,19 @@ public class MiscellaneousCategoryStrategy implements KeyboardStrategy {
         // Подкатегории "Разное"
         KeyboardRow row1 = new KeyboardRow();
         row1.add(MiscellaneousCategoryButton.CAFE);
+        row1.add(MiscellaneousCategoryButton.GIFTS);
         rows.add(row1);
 
         KeyboardRow row2 = new KeyboardRow();
-        row2.add(MiscellaneousCategoryButton.GIFTS);
+        row2.add(MiscellaneousCategoryButton.HOBBIES);
+        row2.add(MiscellaneousCategoryButton.ENTERTAINMENT);
         rows.add(row2);
 
-        KeyboardRow row3 = new KeyboardRow();
-        row3.add(MiscellaneousCategoryButton.HOBBIES);
-        rows.add(row3);
-
-        KeyboardRow row4 = new KeyboardRow();
-        row4.add(MiscellaneousCategoryButton.ENTERTAINMENT);
-        rows.add(row4);
-
         // Навигация
-        KeyboardRow row5 = new KeyboardRow();
-        row5.add(ActionButton.BACK);
-        row5.add(ActionButton.CANCEL);
-        rows.add(row5);
+        KeyboardRow row3 = new KeyboardRow();
+        row3.add(ActionButton.BACK);
+        row3.add(ActionButton.CANCEL);
+        rows.add(row3);
 
         return createMarkup(rows);
     }

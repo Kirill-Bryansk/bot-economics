@@ -6,7 +6,7 @@ public final class ProductsCategoryButton {
     }
 
     // Подкатегории для "🛒 Продукты"
-    public static final String FOOD_FOR_PEOPLE = "🍽️ Еда (люди)";
+    public static final String FOOD_FOR_PEOPLE = "🍽️ Питание";
     public static final String PETS = "🐾 Питомцы";
     public static final String HOUSEHOLD_GOODS = "🧰 Хозтовары";
 
