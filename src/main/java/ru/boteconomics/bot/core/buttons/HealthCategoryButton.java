@@ -10,7 +10,7 @@ public final class HealthCategoryButton {
     public static final String PHARMACY = "💊 Аптека";
 
     //Проверка, является ли текст подкатегорией здоровья
-    public static boolean isHealthcareCategory(String text) {
+    public static boolean isHealthCategory(String text) {
         return  text.equals(HOSPITAL) || text.equals(PHARMACY);
     }
 

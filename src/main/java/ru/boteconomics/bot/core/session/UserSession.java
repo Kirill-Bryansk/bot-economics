@@ -3,6 +3,7 @@ package ru.boteconomics.bot.core.session;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -26,6 +27,7 @@ public class UserSession {
     private String transportCategory;  // Подкатегория транспорта (если категория = транспорт)
     private String productsCategory;   // Подкатегория продуктов (если категория = продукты)
     private String miscellaneousCategory; // Подкатегория "Разное" (если категория = разное) // НОВОЕ
+    private String healthCategory;         // Подкатегория здоровье
     private BigDecimal amount;         // Введенная сумма
     private LocalDateTime timestamp;   // Время создания сессии
 
@@ -46,7 +48,8 @@ public class UserSession {
         this.housingCategory = null;
         this.transportCategory = null;
         this.productsCategory = null;
-        this.miscellaneousCategory = null; // НОВОЕ
+        this.miscellaneousCategory = null;
+        this.healthCategory = null;
         this.amount = null;
         this.timestamp = LocalDateTime.now();
     }
@@ -60,7 +63,8 @@ public class UserSession {
         this.housingCategory = null;
         this.transportCategory = null;
         this.productsCategory = null;
-        this.miscellaneousCategory = null; // НОВОЕ
+        this.miscellaneousCategory = null;
+        this.healthCategory = null;
         this.amount = null;
     }
 
@@ -101,9 +105,16 @@ public class UserSession {
     }
 
     /**
-     * Сброс данных для возврата к выбору подкатегории "Разное" // НОВОЕ
+     * Сброс данных для возврата к выбору подкатегории "Разное"
      */
     public void resetForMiscellaneousCategorySelection() {
+        this.amount = null;
+    }
+
+    /**
+     * Сброс данных для возврата к выбору подкатегории "Здоровье"
+     */
+    public void resetForHealthCategorySelection() {
         this.amount = null;
     }
 
@@ -153,10 +164,17 @@ public class UserSession {
     }
 
     /**
-     * Проверяет, выбрана ли категория "Разное" // НОВОЕ
+     * Проверяет, выбрана ли категория "Разное"
      */
     public boolean isMiscellaneousCategory() {
         return category != null && category.equals("📦 Разное");
+    }
+
+    /**
+     * Проверяет, выбрана ли категория "Здоровье"
+     */
+    public boolean isHealthCategory() {
+        return category != null && category.equals("🏥 Здоровье");
     }
 
     /**
@@ -191,6 +209,11 @@ public class UserSession {
         if (isMiscellaneousCategory()) {
             return miscellaneousCategory != null;
         }
+        // Если категория "Здоровье", проверяем подкатегорию
+        if (isHealthCategory()) {
+            return healthCategory != null;
+        }
+
 
         return true;
     }
@@ -200,8 +223,8 @@ public class UserSession {
      */
     public String toDebugString() {
         return String.format(
-                "UserSession{state=%s, category=%s, childName=%s, childCategory=%s, housingCategory=%s, transportCategory=%s, productsCategory=%s, miscellaneousCategory=%s, amount=%s}", // НОВОЕ: добавлен miscellaneousCategory
-                currentStateId, category, childName, childCategory, housingCategory, transportCategory, productsCategory, miscellaneousCategory, amount
+                "UserSession{state=%s, category=%s, childName=%s, childCategory=%s, housingCategory=%s, transportCategory=%s, productsCategory=%s, miscellaneousCategory=%s, healthCategory=%s, amount=%s}",
+                currentStateId, category, childName, childCategory, housingCategory, transportCategory, productsCategory, miscellaneousCategory, healthCategory, amount
         );
     }
 }

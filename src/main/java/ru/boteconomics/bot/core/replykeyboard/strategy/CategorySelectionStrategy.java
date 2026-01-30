@@ -37,9 +37,13 @@ public class CategorySelectionStrategy implements KeyboardStrategy {
         // 4-й ряд: Дети и Навигация
         KeyboardRow row4 = new KeyboardRow();
         row4.add(CategoryButton.CHILDREN);
-        row4.add(ActionButton.BACK);
-        row4.add(ActionButton.CANCEL);
         rows.add(row4);
+
+        KeyboardRow row5 = new KeyboardRow();
+        //row5.add(CategoryButton.CHILDREN);
+        row5.add(ActionButton.BACK);
+        row5.add(ActionButton.CANCEL);
+        rows.add(row5);
 
         return createMarkup(rows);
     }

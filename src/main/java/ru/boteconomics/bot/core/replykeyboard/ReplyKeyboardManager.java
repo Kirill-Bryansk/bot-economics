@@ -3,6 +3,7 @@ package ru.boteconomics.bot.core.replykeyboard;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import ru.boteconomics.bot.core.replykeyboard.strategy.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +31,8 @@ public class ReplyKeyboardManager {
         strategies.put(ReplyKeyboardType.HOUSING_CATEGORY_SELECTION, new HousingCategoryStrategy());
         strategies.put(ReplyKeyboardType.TRANSPORT_CATEGORY_SELECTION, new TransportCategoryStrategy());
         strategies.put(ReplyKeyboardType.PRODUCTS_CATEGORY_SELECTION, new ProductsCategoryStrategy());
-        strategies.put(ReplyKeyboardType.MISCELLANEOUS_CATEGORY_SELECTION, new MiscellaneousCategoryStrategy()); // НОВОЕ
+        strategies.put(ReplyKeyboardType.MISCELLANEOUS_CATEGORY_SELECTION, new MiscellaneousCategoryStrategy());
+        strategies.put(ReplyKeyboardType.HEALTH_CATEGORY_SELECTION, new HealthCategoryStrategy());
         strategies.put(ReplyKeyboardType.AMOUNT_INPUT, new AmountInputStrategy());
         strategies.put(ReplyKeyboardType.CONFIRMATION, new ConfirmationStrategy());
     }
@@ -83,8 +85,11 @@ public class ReplyKeyboardManager {
             case "PRODUCTS_CATEGORY_SELECTION":
                 return ReplyKeyboardType.PRODUCTS_CATEGORY_SELECTION;
 
-            case "MISCELLANEOUS_CATEGORY_SELECTION": // НОВОЕ
+            case "MISCELLANEOUS_CATEGORY_SELECTION":
                 return ReplyKeyboardType.MISCELLANEOUS_CATEGORY_SELECTION;
+
+            case "HEALTH_CATEGORY_SELECTION":
+                return ReplyKeyboardType.HEALTH_CATEGORY_SELECTION;
 
             case "AMOUNT_INPUT":
                 return ReplyKeyboardType.AMOUNT_INPUT;

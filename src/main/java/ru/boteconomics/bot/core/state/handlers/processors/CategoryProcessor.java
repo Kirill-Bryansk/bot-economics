@@ -66,6 +66,14 @@ public class CategoryProcessor {
                     "PRODUCTS_CATEGORY_SELECTION"
             );
         }
+        // Проверяем, выбрана ли категория "Здоровье"
+        else if (CategoryButton.HEALTH.equals(category)) {
+            log.info("Переход: CATEGORY_SELECTION → HEALTH_CATEGORY_SELECTION");
+            return HandlerResponse.next(
+                    "Вы выбрали категорию: " + category + "\nТеперь выберите подкатегорию:",
+                    "HEALTH_CATEGORY_SELECTION"
+            );
+        }
         // Проверяем, выбрана ли категория "Разное"
         else if (CategoryButton.OTHER.equals(category)) {
             log.info("Переход: CATEGORY_SELECTION → MISCELLANEOUS_CATEGORY_SELECTION");

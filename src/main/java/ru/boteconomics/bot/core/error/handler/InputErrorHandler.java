@@ -45,6 +45,9 @@ public class InputErrorHandler {
             case "MISCELLANEOUS_CATEGORY_SELECTION": // НОВОЕ
                 return MiscellaneousCategoryButton.isMiscellaneousCategory(input) ? null : "Выберите подкатегорию из списка";
 
+            case "HEALTH_CATEGORY_SELECTION": // НОВОЕ
+                return HealthCategoryButton.isHealthCategory(input) ? null : "Выберите подкатегорию из списка";
+
             case "AMOUNT_INPUT":
                 return validateAmount(input);
 
@@ -87,6 +90,7 @@ public class InputErrorHandler {
             case "TRANSPORT_CATEGORY_SELECTION": return "выбор подкатегории транспорта";
             case "PRODUCTS_CATEGORY_SELECTION": return "выбор подкатегории продуктов";
             case "MISCELLANEOUS_CATEGORY_SELECTION": return "выбор подкатегории для 'Разное'"; // НОВОЕ
+            case "HEALTH_CATEGORY_SELECTION": return "выбор подкатегории здравоохранения"; // НОВОЕ
             case "AMOUNT_INPUT": return "ввод суммы";
             case "CONFIRMATION": return "подтверждение";
             default: return "неизвестный шаг";
