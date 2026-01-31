@@ -3,6 +3,7 @@ package ru.boteconomics.bot.core.replykeyboard;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import ru.boteconomics.bot.core.replykeyboard.strategy.*;
+import ru.boteconomics.bot.core.statistics.replykeyboard.StatisticsMenuStrategy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +36,8 @@ public class ReplyKeyboardManager {
         strategies.put(ReplyKeyboardType.HEALTH_CATEGORY_SELECTION, new HealthCategoryStrategy());
         strategies.put(ReplyKeyboardType.AMOUNT_INPUT, new AmountInputStrategy());
         strategies.put(ReplyKeyboardType.CONFIRMATION, new ConfirmationStrategy());
+        strategies.put(ReplyKeyboardType.STATISTICS_MENU, new StatisticsMenuStrategy());
+
     }
 
     /**
@@ -96,6 +99,9 @@ public class ReplyKeyboardManager {
 
             case "CONFIRMATION":
                 return ReplyKeyboardType.CONFIRMATION;
+
+            case "STATISTICS_MENU":
+                return ReplyKeyboardType.STATISTICS_MENU;
 
             default:
                 return ReplyKeyboardType.MAIN_MENU; // fallback

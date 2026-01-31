@@ -19,25 +19,19 @@ public class HousingCategoryStrategy implements KeyboardStrategy {
         // Подкатегории жилья (используем константы из HousingCategoryButton)
         KeyboardRow row1 = new KeyboardRow();
         row1.add(HousingCategoryButton.UTILITIES);
+        row1.add(HousingCategoryButton.REPAIR);
         rows.add(row1);
 
         KeyboardRow row2 = new KeyboardRow();
-        row2.add(HousingCategoryButton.REPAIR);
+        row2.add(HousingCategoryButton.FURNITURE);
+        row2.add(HousingCategoryButton.APPLIANCES);
         rows.add(row2);
 
-        KeyboardRow row3 = new KeyboardRow();
-        row3.add(HousingCategoryButton.FURNITURE);
-        rows.add(row3);
-
-        KeyboardRow row4 = new KeyboardRow();
-        row4.add(HousingCategoryButton.APPLIANCES);
-        rows.add(row4);
-
         // Навигация
-        KeyboardRow row5 = new KeyboardRow();
-        row5.add(ActionButton.BACK);
-        row5.add(ActionButton.CANCEL);
-        rows.add(row5);
+        KeyboardRow row3 = new KeyboardRow();
+        row3.add(ActionButton.BACK);
+        row3.add(ActionButton.CANCEL);
+        rows.add(row3);
 
         return createMarkup(rows);
     }

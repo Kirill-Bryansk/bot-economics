@@ -71,16 +71,16 @@ public class ExpenseService {
      */
     public String generateSuccessMessage(ExpenseDTO expense) {
         StringBuilder sb = new StringBuilder();
-        sb.append("✅ **Расход успешно сохранен!**\n\n");
-        sb.append("💰 **Сумма:** ").append(expense.getAmount()).append(" ₽\n");
-        sb.append("📂 **Категория:** ").append(expense.getCategory()).append("\n");
+        sb.append("✅ Расход успешно сохранен!\n\n");
+        sb.append("💰 Сумма: ").append(expense.getAmount()).append(" ₽\n");
+        sb.append("📂 Категория: ").append(expense.getCategory()).append("\n");
 
         if (expense.getChildName() != null) {
-            sb.append("👶 **Ребенок:** ").append(expense.getChildName()).append("\n");
+            sb.append("👶 Ребенок: ").append(expense.getChildName()).append("\n");
         }
 
         if (expense.getChildCategory() != null) {
-            sb.append("🏷️ **Подкатегория:** ").append(expense.getChildCategory()).append("\n");
+            sb.append("🏷️ Подкатегория: ").append(expense.getChildCategory()).append("\n");
         }
 
         sb.append("\nЧто хотите сделать дальше?");

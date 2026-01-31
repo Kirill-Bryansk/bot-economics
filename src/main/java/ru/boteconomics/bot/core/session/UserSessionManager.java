@@ -21,6 +21,7 @@ public class UserSessionManager {
         }
 
         UserSession session = new UserSession();
+        session.setUserId(chatId);
         session.setCurrentStateId("MAIN_MENU");
         sessions.put(chatId, session);
 
@@ -35,6 +36,7 @@ public class UserSessionManager {
 
         return sessions.computeIfAbsent(chatId, k -> {
             UserSession session = new UserSession();
+            session.setUserId(chatId);
             session.setCurrentStateId("MAIN_MENU");
             log.info("Создана новая сессия для chatId={}", chatId);
             return session;

@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 @ToString
 public class UserSession {
 
+    // Идентификатор пользователя (chatId)
+    private Long userId;
+
     // Текущее состояние диалога
     private String currentStateId = "MAIN_MENU";
 
@@ -41,6 +44,7 @@ public class UserSession {
      * Полный сброс всех данных (при отмене или завершении)
      */
     public void resetAll() {
+        this.userId = null;
         this.currentStateId = "MAIN_MENU";
         this.category = null;
         this.childName = null;
