@@ -22,14 +22,23 @@ public class ExpenseService {
         // TODO: Получить реальный userId из сессии/контекста
         Long userId = 1L; // Заглушка
 
-        // Создаем DTO из сессии
+        // Создаем DTO из сессии с корректными полями для подкатегорий
         ExpenseDTO expense = ExpenseDTO.fromSession(
                 userId,
                 session.getCategory(),
                 session.getChildName(),
                 session.getChildCategory(),
+                session.getHousingCategory(),
+                session.getTransportCategory(),
+                session.getProductsCategory(),
+                session.getHealthCategory(),
+                session.getMiscellaneousCategory(),
                 session.getAmount()
         );
+
+        // Логируем, что будет передано на сохранение
+        log.info("📤 DTO для сохранения в БД:");
+        logExpenseDto(expense);
 
         // TODO: Сохранить в БД (пока заглушка)
         // expense.setId(generateId());
@@ -58,11 +67,52 @@ public class ExpenseService {
             log.info("│ Подкатегория ребенка: {}", session.getChildCategory());
         }
 
+        if (session.getHousingCategory() != null) {
+            log.info("│ Подкатегория жилья: {}", session.getHousingCategory());
+        }
+
+        if (session.getTransportCategory() != null) {
+            log.info("│ Подкатегория транспорта: {}", session.getTransportCategory());
+        }
+
+        if (session.getProductsCategory() != null) {
+            log.info("│ Подкатегория продуктов: {}", session.getProductsCategory());
+        }
+
+        if (session.getHealthCategory() != null) {
+            log.info("│ Подкатегория здоровья: {}", session.getHealthCategory());
+        }
+
+        if (session.getMiscellaneousCategory() != null) {
+            log.info("│ Подкатегория 'Разное': {}", session.getMiscellaneousCategory());
+        }
+
         if (session.getAmount() != null) {
             log.info("│ Сумма: {} ₽", session.getAmount());
         }
 
         log.info("│ Готово для сохранения: {}", session.isReadyForSaving());
+        log.info("└─────────────────────────────────────────");
+    }
+
+    /**
+     * Логирует содержимое ExpenseDTO перед сохранением.
+     */
+    private void logExpenseDto(ExpenseDTO expense) {
+        log.info("┌─────────────────────────────────────────");
+        log.info("│ DTO для сохранения в БД:");
+        log.info("├─────────────────────────────────────────");
+        log.info("│ userId: {}", expense.getUserId());
+        log.info("│ category: {}", expense.getCategory());
+        log.info("│ childName: {}", expense.getChildName());
+        log.info("│ childCategory: {}", expense.getChildCategory());
+        log.info("│ housingCategory: {}", expense.getHousingCategory());
+        log.info("│ transportCategory: {}", expense.getTransportCategory());
+        log.info("│ productsCategory: {}", expense.getProductsCategory());
+        log.info("│ healthCategory: {}", expense.getHealthCategory());
+        log.info("│ miscellaneousCategory: {}", expense.getMiscellaneousCategory());
+        log.info("│ amount: {} ₽", expense.getAmount());
+        log.info("│ description: {}", expense.getDescription());
         log.info("└─────────────────────────────────────────");
     }
 
