@@ -1,28 +1,34 @@
 package ru.boteconomics.bot.core.expense.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.boteconomics.bot.data.service.TransactionDataService;
 import ru.boteconomics.bot.core.expense.dto.ExpenseDTO;
 import ru.boteconomics.bot.core.session.UserSession;
 
-import java.math.BigDecimal;
-
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ExpenseService {
+
+    private final TransactionDataService transactionDataService;
 
     /**
      * Сохраняет расход на основе данных из сессии.
-     * Пока только логирует, позже будет сохранять в БД.
      */
     public ExpenseDTO saveExpense(UserSession session) {
         log.info("📥 Получен запрос на сохранение расхода:");
         logDetailedSession(session);
 
-        // TODO: Получить реальный userId из сессии/контекста
-        Long userId = 1L; // Заглушка
+        // Получаем userId из сессии
+        Long userId = session.getUserId();
+        if (userId == null) {
+            log.warn("userId не найден в сессии, используем заглушку");
+            userId = 1L; // Заглушка на случай, если userId не установлен
+        }
 
-        // Создаем DTO из сессии с корректными полями для подкатегорий
+        // Создаем DTO из сессии
         ExpenseDTO expense = ExpenseDTO.fromSession(
                 userId,
                 session.getCategory(),
@@ -40,11 +46,10 @@ public class ExpenseService {
         log.info("📤 DTO для сохранения в БД:");
         logExpenseDto(expense);
 
-        // TODO: Сохранить в БД (пока заглушка)
-        // expense.setId(generateId());
-        // expenseRepository.save(expense);
+        // Сохраняем в базу данных через сервис
+        transactionDataService.saveTransaction(expense);
 
-        log.info("✅ Расход сохранен (заглушка): {}", expense.toSummaryString());
+        log.info("✅ Расход успешно сохранен: {}", expense.toSummaryString());
 
         return expense;
     }
@@ -58,6 +63,10 @@ public class ExpenseService {
         log.info("├─────────────────────────────────────────");
         log.info("│ Текущее состояние: {}", session.getCurrentStateId());
         log.info("│ Категория: {}", session.getCategory());
+
+        if (session.getUserId() != null) {
+            log.info("│ userId: {}", session.getUserId());
+        }
 
         if (session.getChildName() != null) {
             log.info("│ Ребенок: {}", session.getChildName());
@@ -135,12 +144,5 @@ public class ExpenseService {
 
         sb.append("\nЧто хотите сделать дальше?");
         return sb.toString();
-    }
-
-    /**
-     * Генерирует ID (заглушка, позже будет из БД).
-     */
-    private Long generateId() {
-        return System.currentTimeMillis();
     }
 }
