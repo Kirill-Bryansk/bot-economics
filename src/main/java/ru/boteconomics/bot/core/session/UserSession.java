@@ -29,7 +29,7 @@ public class UserSession {
     private String housingCategory;    // Подкатегория жилья (если категория = жилье)
     private String transportCategory;  // Подкатегория транспорта (если категория = транспорт)
     private String productsCategory;   // Подкатегория продуктов (если категория = продукты)
-    private String miscellaneousCategory; // Подкатегория "Разное" (если категория = разное) // НОВОЕ
+    private String miscellaneousCategory; // Подкатегория "Разное" (если категория = разное)
     private String healthCategory;         // Подкатегория здоровье
     private BigDecimal amount;         // Введенная сумма
     private LocalDateTime timestamp;   // Время создания сессии
@@ -209,15 +209,15 @@ public class UserSession {
             return productsCategory != null;
         }
 
-        // Если категория "Разное", проверяем подкатегорию // НОВОЕ
+        // Если категория "Разное", проверяем подкатегорию
         if (isMiscellaneousCategory()) {
             return miscellaneousCategory != null;
         }
+
         // Если категория "Здоровье", проверяем подкатегорию
         if (isHealthCategory()) {
             return healthCategory != null;
         }
-
 
         return true;
     }

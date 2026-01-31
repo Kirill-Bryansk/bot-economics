@@ -5,7 +5,7 @@ public final class Callback {
         throw new AssertionError("Нельзя создать экземпляр Callback");
     }
 
-    // ========== ОСНОВНЫЕ КОМАНДЫ (НОВЫЕ ДЛЯ STATE MANAGER) ==========
+    // ========== ОСНОВНЫЕ КОМАНДЫ (НОВЫЕ ДЛЯ STATE MANAGER) ==========Ты
     public static final String MAIN_MENU = "MAIN_MENU";
     public static final String ADD_EXPENSE = "ADD_EXPENSE";
     public static final String HISTORY = "HISTORY";
